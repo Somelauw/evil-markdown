@@ -4,8 +4,7 @@
 ;; URL: https://github.com/Somelauw/evil-markdown.git
 ;; Git-Repository; git://github.com/Somelauw/evil-markdown.git
 ;; Created: 2016-03-21
-;; Forked since 2016-03-21
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: evil vim-emulation markdown-mode key-bindings presets
 
 ;; This file is not part of GNU Emacs
@@ -93,7 +92,58 @@
 ;;; non-repeatible
 (evil-declare-change-repeat 'markdown-cycle)
 (evil-declare-change-repeat 'markdown-shifttab)
-(evil-declare-change-repeat 'markdown-table-end-of-field)
+
+;;; Operators
+(evil-define-operator evil-markdown-shift-left (beg end count)
+  "Promote or indent region."
+  (interactive "<r><vc>")
+  (if (or (thing-at-point-looking-at markdown-regex-header)
+          (and (region-active-p)
+               (save-excursion
+                 (goto-char beg)
+                 (thing-at-point-looking-at markdown-regex-header))))
+      (apply-on-rectangle (lambda (_ _)
+                            (when (thing-at-point-looking-at
+                                   markdown-regex-header)
+                              (markdown-promote))) beg end)
+    (evil-shift-left beg end count)))
+
+(evil-define-operator evil-markdown-shift-right (beg end count)
+  "Demote or unindent region."
+  (interactive "<r><vc>")
+  (if (or (thing-at-point-looking-at markdown-regex-header)
+          (and (region-active-p)
+               (save-excursion
+                 (goto-char beg)
+                 (thing-at-point-looking-at markdown-regex-header))))
+      (apply-on-rectangle (lambda (_ _)
+                             (when (thing-at-point-looking-at
+                                    markdown-regex-header)
+                               (markdown-demote))) beg end)
+    (evil-shift-right beg end count)))
+
+(defun evil-markdown-shift-left-line ()
+  "Promote or indent line."
+  (interactive)
+  (if (some thing-at-point-looking-at (list markdown-regex-header
+                                            markdown-regex-hr))
+      (markdown-promote)
+    (evil-shift-left-line)))
+
+(defun evil-markdown-shift-right-line ()
+  "Demote or unindent line."
+  (interactive)
+  (if (some thing-at-point-looking-at (list markdown-regex-header
+                                            markdown-regex-hr))
+      (markdown-demote)
+    (evil-shift-right-line)))
+
+;;; Text objects
+(evil-define-text-object markdown-element-textobj (count &optional beg end type)
+  "A markdown element."
+  (list (save-excursion (markdown-beginning-of-block) (point))
+        (save-excursion (markdown-end-of-block) (point))))
+
 
 ;;; Key themes
 (defun evil-markdown--populate-base-bindings ()
@@ -105,16 +155,16 @@
         (kbd "{") 'markdown-backward-paragraph))
     (dolist (state '(normal visual))
       (evil-define-key state evil-markdown-mode-map
-        ;; (kbd "<") 'evil-markdown-shift-left
-        ;; (kbd ">") 'evil-markdown-shift-right
+        (kbd "<") 'evil-markdown-shift-left
+        (kbd ">") 'evil-markdown-shift-right
         (kbd "<tab>") 'markdown-cycle
         (kbd "<S-tab>") 'markdown-shifttab))))
 
 (defun evil-markdown--populate-insert-bindings ()
   "Define insert mode bindings."
   (evil-define-key 'insert evil-markdown-mode-map
-    (kbd "C-t") 'markdown-demote
-    (kbd "C-d") 'markdown-promote))
+    (kbd "C-t") 'evil-markdown-shift-right-line
+    (kbd "C-d") 'evil-markdown-shift-left-line))
 
 (defun evil-markdown--populate-navigation-bindings ()
   "Configures gj/gk/gh/gl for navigation."
@@ -140,14 +190,6 @@
         (kbd (concat "M-" (capitalize .right))) 'markdown-demote-subtree
         (kbd (concat "M-" (capitalize .up))) 'markdown-move-subtree-up
         (kbd (concat "M-" (capitalize .down))) 'markdown-move-subtree-down))))
-
-;;; TODO operators
-
-;;; textobjects
-(evil-define-text-object markdown-element-textobj (count &optional beg end type)
-  "A markdown element."
-  (list (save-excursion (markdown-beginning-of-block) (point))
-        (save-excursion (markdown-end-of-block) (point))))
 
 (defun evil-markdown--populate-textobjects-bindings ()
   (dolist (state '(visual operator))

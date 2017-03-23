@@ -16,8 +16,8 @@ This is inspired by https://github.com/Somelauw/evil-org-improved and https://gi
 | M-ret          | insert heading            |
 | TAB            | fold / unfold headings    |
 | gh, gj, gk, gl | navigate between elements |
-| M-h            | promote a heading         |
-| M-l            | demote a heading          |
+| M-h or >>      | promote a heading         |
+| M-l or <<      | demote a heading          |
 | M-k            | move subtree up           |
 | M-j            | move subtree down         |
 | vae            | select an element         |
