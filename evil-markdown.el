@@ -102,10 +102,12 @@
                (save-excursion
                  (goto-char beg)
                  (thing-at-point-looking-at markdown-regex-header))))
-      (apply-on-rectangle (lambda (_ _)
-                            (when (thing-at-point-looking-at
-                                   markdown-regex-header)
-                              (markdown-promote))) beg end)
+      (apply-on-rectangle
+       (progn
+         (deactivate-mark)
+         (lambda (_ _)
+           (when (thing-at-point-looking-at markdown-regex-header)
+             (markdown-insert-header-dwim '(4))))) beg end)
     (evil-shift-left beg end count)))
 
 (evil-define-operator evil-markdown-shift-right (beg end count)
@@ -116,10 +118,12 @@
                (save-excursion
                  (goto-char beg)
                  (thing-at-point-looking-at markdown-regex-header))))
-      (apply-on-rectangle (lambda (_ _)
-                             (when (thing-at-point-looking-at
-                                    markdown-regex-header)
-                               (markdown-demote))) beg end)
+      (progn
+        (deactivate-mark)
+        (apply-on-rectangle
+         (lambda (_ _)
+           (when (thing-at-point-looking-at markdown-regex-header)
+             (markdown-insert-header-dwim '(16)))) beg end))
     (evil-shift-right beg end count)))
 
 (defun evil-markdown-shift-left-line ()
@@ -127,7 +131,7 @@
   (interactive)
   (if (some thing-at-point-looking-at (list markdown-regex-header
                                             markdown-regex-hr))
-      (markdown-promote)
+      (outline-promote)
     (evil-shift-left-line)))
 
 (defun evil-markdown-shift-right-line ()
