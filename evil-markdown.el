@@ -190,8 +190,6 @@
         (kbd (concat "M-" .right)) 'markdown-demote
         (kbd (concat "M-" .up)) 'markdown-move-up
         (kbd (concat "M-" .down)) 'markdown-move-down
-        (kbd (concat "M-" (capitalize .left))) 'markdown-promote-subtree
-        (kbd (concat "M-" (capitalize .right))) 'markdown-demote-subtree
         (kbd (concat "M-" (capitalize .up))) 'markdown-move-subtree-up
         (kbd (concat "M-" (capitalize .down))) 'markdown-move-subtree-down))))
 
