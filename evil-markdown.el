@@ -175,7 +175,7 @@
   (let-alist evil-markdown-movement-bindings
     (evil-define-key 'motion evil-markdown-mode-map
        (kbd (concat "g" .left)) 'markdown-up-heading
-       (kbd (concat "g" .right)) 'markdown-next-heading
+       (kbd (concat "g" .right)) (lambda () (interactive) (markdown-next-heading))
        (kbd (concat "g" .up)) 'markdown-backward-same-level
        (kbd (concat "g" .down)) 'markdown-forward-same-level)))
 
