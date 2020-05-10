@@ -210,8 +210,7 @@
    (assq 'evil-markdown-mode minor-mode-map-alist)
    evil-markdown-mode-map))
 
-(if (and (boundp 'evil-disable-insert-state-bindings)
-         (evil-disable-insert-state-bindings))
+(if (boundp 'evil-disable-insert-state-bindings)
     (evil-markdown-set-key-theme '(navigation textobjects additional))
     (evil-markdown-set-key-theme '(navigation textobjects insert additional)))
 
