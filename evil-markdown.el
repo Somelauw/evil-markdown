@@ -28,6 +28,8 @@
 ;; See, https://github.com/Somelauw/evil-markdown-mode/issues
 ;;
 ;;; Code:
+(require 'cl-lib)
+
 (require 'evil)
 (require 'markdown-mode)
 
@@ -129,16 +131,16 @@
 (defun evil-markdown-shift-left-line ()
   "Promote or indent line."
   (interactive)
-  (if (some thing-at-point-looking-at (list markdown-regex-header
-                                            markdown-regex-hr))
+  (if (cl-some thing-at-point-looking-at (list markdown-regex-header
+                                               markdown-regex-hr))
       (outline-promote)
     (evil-shift-left-line)))
 
 (defun evil-markdown-shift-right-line ()
   "Demote or unindent line."
   (interactive)
-  (if (some thing-at-point-looking-at (list markdown-regex-header
-                                            markdown-regex-hr))
+  (if (cl-some thing-at-point-looking-at (list markdown-regex-header
+                                               markdown-regex-hr))
       (markdown-demote)
     (evil-shift-right-line)))
 
