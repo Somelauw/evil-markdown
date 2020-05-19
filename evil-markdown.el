@@ -53,7 +53,8 @@
 (defcustom evil-markdown-use-additional-insert
   nil
   "Whether additional keybindings should also be available in insert mode."
-  :group 'evil-markdown)
+  :group 'evil-markdown
+  :type 'boolean)
 
 (defvar evil-markdown-mode-map (make-sparse-keymap))
 
@@ -81,9 +82,9 @@
 (evil-declare-motion 'markdown-previous-visible-heading)
 
 ;; other
-(evil-declare-motion 'markdown-beginning-of-block)
+(evil-declare-motion 'markdown-beginning-of-text-block)
 (evil-declare-motion 'markdown-beginning-of-defun)
-(evil-declare-motion 'markdown-end-of-block)
+(evil-declare-motion 'markdown-end-of-text-block)
 (evil-declare-motion 'markdown-end-of-block-element)
 (evil-declare-motion 'markdown-end-of-defun)
 (evil-declare-motion 'markdown-next-visible-heading)
@@ -107,7 +108,7 @@
       (apply-on-rectangle
        (progn
          (deactivate-mark)
-         (lambda (_ _)
+         (lambda (_x _y)
            (when (thing-at-point-looking-at markdown-regex-header)
              (markdown-insert-header-dwim '(4))))) beg end)
     (evil-shift-left beg end count)))
@@ -123,7 +124,7 @@
       (progn
         (deactivate-mark)
         (apply-on-rectangle
-         (lambda (_ _)
+         (lambda (_x _y)
            (when (thing-at-point-looking-at markdown-regex-header)
              (markdown-insert-header-dwim '(16)))) beg end))
     (evil-shift-right beg end count)))
@@ -131,24 +132,24 @@
 (defun evil-markdown-shift-left-line ()
   "Promote or indent line."
   (interactive)
-  (if (cl-some thing-at-point-looking-at (list markdown-regex-header
-                                               markdown-regex-hr))
+  (if (cl-some #'thing-at-point-looking-at (list markdown-regex-header
+                                                 markdown-regex-hr))
       (outline-promote)
-    (evil-shift-left-line)))
+    (evil-shift-left-line 1)))
 
 (defun evil-markdown-shift-right-line ()
   "Demote or unindent line."
   (interactive)
-  (if (cl-some thing-at-point-looking-at (list markdown-regex-header
-                                               markdown-regex-hr))
+  (if (cl-some #'thing-at-point-looking-at (list markdown-regex-header
+                                                 markdown-regex-hr))
       (markdown-demote)
-    (evil-shift-right-line)))
+    (evil-shift-right-line 1)))
 
 ;;; Text objects
 (evil-define-text-object markdown-element-textobj (count &optional beg end type)
   "A markdown element."
-  (list (save-excursion (markdown-beginning-of-block) (point))
-        (save-excursion (markdown-end-of-block) (point))))
+  (list (save-excursion (markdown-beginning-of-text-block) (point))
+        (save-excursion (markdown-end-of-text-block) (point))))
 
 
 ;;; Key themes
