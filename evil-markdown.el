@@ -213,9 +213,22 @@
    (assq 'evil-markdown-mode minor-mode-map-alist)
    evil-markdown-mode-map))
 
-(if (boundp 'evil-disable-insert-state-bindings)
-    (evil-markdown-set-key-theme '(navigation textobjects additional))
-    (evil-markdown-set-key-theme '(navigation textobjects insert additional)))
+(defcustom evil-markdown-key-theme
+  (if (bound-and-true-p evil-disable-insert-state-bindings)
+      '(navigation textobjects additional)
+    '(navigation textobjects insert additional))
+  "List of key themes used to compose `evil-markdown-mode-map'."
+  :group 'evil-markdown
+  :type
+  '(set (const navigation)
+        (const textobjects)
+        (const insert)
+        (const additional))
+  :set (lambda (sym val)
+         (evil-markdown-set-key-theme val)
+         (set-default sym val)))
+
+(evil-markdown-set-key-theme evil-markdown-key-theme)
 
 (provide 'evil-markdown)
 ;;; evil-markdown.el ends here
