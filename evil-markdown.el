@@ -1,4 +1,4 @@
-;;; evil-markdown.el --- evil keybindings for markdown-mode
+;;; evil-markdown.el --- evil keybindings for markdown-mode -*- lexical-binding: t; -*-
 
 ;; Maintainer: Somelauw
 ;; URL: https://github.com/Somelauw/evil-markdown.git
